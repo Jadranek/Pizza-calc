@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Size Calculator</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Pizza Size & Price Calculator</title>
     <style>
         * {
             margin: 0;
@@ -77,9 +76,12 @@
             text-align: center;
         }
 
-        #charts {
+        #circleCanvas {
             max-width: 600px;
             margin: 30px auto;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            height: 300px;
         }
 
         @media (max-width: 600px) {
@@ -123,10 +125,7 @@
 
     <div class="result" id="result"></div>
 
-    <div id="charts">
-        <canvas id="areaChart"></canvas>
-        <canvas id="costChart" style="margin-top: 20px;"></canvas>
-    </div>
+    <canvas id="circleCanvas"></canvas>
 
     <script>
         function calculate() {
@@ -154,50 +153,46 @@
                 <p><strong>Better Value: ${betterValue}</strong></p>
             `;
 
-            drawCharts(area1, area2, costPerCm1, costPerCm2);
+            drawOverlappingCircles(diameter1, diameter2);
         }
 
-        function drawCharts(area1, area2, costPerCm1, costPerCm2) {
-            const ctx1 = document.getElementById('areaChart').getContext('2d');
-            const ctx2 = document.getElementById('costChart').getContext('2d');
+        function drawOverlappingCircles(diameter1, diameter2) {
+            const canvas = document.getElementById('circleCanvas');
+            const ctx = canvas.getContext('2d');
 
-            new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['Pizza 1', 'Pizza 2'],
-                    datasets: [{
-                        label: 'Area (cm²)',
-                        data: [area1.toFixed(2), area2.toFixed(2)],
-                        backgroundColor: ['#ff6384', '#36a2eb'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true },
-                        tooltip: { enabled: true }
-                    },
-                }
-            });
+            const radius1 = diameter1 / 2;
+            const radius2 = diameter2 / 2;
 
-            new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: ['Pizza 1', 'Pizza 2'],
-                    datasets: [{
-                        label: 'Cost per cm² (CZK)',
-                        data: [costPerCm1, costPerCm2],
-                        backgroundColor: ['#ffcd56', '#4bc0c0'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: true },
-                        tooltip: { enabled: true }
-                    },
-                }
-            });
+            // Reset canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set canvas size
+            canvas.width = 600;
+            canvas.height = 300;
+
+            // Draw Pizza 1 Circle
+            ctx.beginPath();
+            ctx.arc(200, canvas.height / 2, radius1, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ff6384';
+            ctx.fill();
+            ctx.strokeStyle = '#ff1a1a';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Draw Pizza 2 Circle
+            ctx.beginPath();
+            ctx.arc(350, canvas.height / 2, radius2, 0, 2 * Math.PI);
+            ctx.fillStyle = '#36a2eb';
+            ctx.fill();
+            ctx.strokeStyle = '#1a7ff2';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Add a label for each pizza
+            ctx.font = '16px Arial';
+            ctx.fillStyle = '#333';
+            ctx.fillText('Pizza 1', 180, canvas.height / 2 + radius1 + 20);
+            ctx.fillText('Pizza 2', 330, canvas.height / 2 + radius2 + 20);
         }
     </script>
 </body>
