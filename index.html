@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizza Size Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -76,8 +77,9 @@
             text-align: center;
         }
 
-        p {
-            margin-bottom: 10px;
+        #charts {
+            max-width: 600px;
+            margin: 30px auto;
         }
 
         @media (max-width: 600px) {
@@ -121,6 +123,11 @@
 
     <div class="result" id="result"></div>
 
+    <div id="charts">
+        <canvas id="areaChart"></canvas>
+        <canvas id="costChart" style="margin-top: 20px;"></canvas>
+    </div>
+
     <script>
         function calculate() {
             const diameter1 = parseFloat(document.getElementById('diameter1').value);
@@ -146,6 +153,51 @@
                 <p>Pizza 2 Cost per cm²: ${costPerCm2} CZK</p>
                 <p><strong>Better Value: ${betterValue}</strong></p>
             `;
+
+            drawCharts(area1, area2, costPerCm1, costPerCm2);
+        }
+
+        function drawCharts(area1, area2, costPerCm1, costPerCm2) {
+            const ctx1 = document.getElementById('areaChart').getContext('2d');
+            const ctx2 = document.getElementById('costChart').getContext('2d');
+
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Pizza 1', 'Pizza 2'],
+                    datasets: [{
+                        label: 'Area (cm²)',
+                        data: [area1.toFixed(2), area2.toFixed(2)],
+                        backgroundColor: ['#ff6384', '#36a2eb'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    },
+                }
+            });
+
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Pizza 1', 'Pizza 2'],
+                    datasets: [{
+                        label: 'Cost per cm² (CZK)',
+                        data: [costPerCm1, costPerCm2],
+                        backgroundColor: ['#ffcd56', '#4bc0c0'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    },
+                }
+            });
         }
     </script>
 </body>
